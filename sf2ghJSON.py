@@ -2,12 +2,17 @@
 import json
 import requests
 import textwrap
+import argparse
 from getpass import getpass
+from time import sleep
 
 import milestone
 import issue
 
-import argparse
+from config import sleeptime # , OAUTH
+
+OAUTH="?client_id={cid}&client_secret={secret}".format(cid=CLIENTID, secret=CLIENTSECRET )
+
 
 def load_json(filename):
     with open(filename) as stream:
@@ -23,6 +28,12 @@ usage = textwrap.dedent("""
 parser = argparse.ArgumentParser(usage=usage)
 parser.add_argument('input_file', help="JSON export from Sourceforge")
 parser.add_argument('repo', help="Repo name as <owner>/<project>")
+parser.add_argument('-M', '--skip-milestone', dest='skipmilestone',
+    action="store_true", default=False,
+    help="Skip creation of milestones")
+parser.add_argument('-C', '--skip-issue-creation', dest='skipissuecreation',
+    action="store_true", default=False,
+    help="Skip the creation of issues, just update them")
 parser.add_argument('-s', '--start', dest='start_id', action='store',
     help='id of first issue to import; useful for aborted runs')
 parser.add_argument('-u', '--user', dest='github_user')
@@ -88,21 +99,29 @@ def createGitHubArtifact(sfArtifacts, githubName, conversionFunction):
             'https://api.github.com/repos/' + args.repo + '/' + githubName,
             data=json.dumps(ghArtifact),
             auth=auth)
-
+        
         if response.status_code == 201:
             successes += 1
         else:
             print(str(response.status_code) + ": " + response.json()['message'])
             failures += 1
+        # sleep(sleeptime)
 
     total = successes + failures
     print(githubName + ": " + str(total) + " Success: " + str(successes)
         + " Failure: " + str(failures))
 
 collaborators = getCollaborators(auth, args.repo)
+# sleep(sleeptime)
 
-createGitHubArtifact(export['milestones'], "milestones", milestone.sf2github)
+if not args.skipmilestone:
+  createGitHubArtifact(export['milestones'], "milestones", milestone.sf2github)
+
 tickets = sorted(export['tickets'], key=lambda t: t['ticket_num'])
-createGitHubArtifact(tickets, "issues", issue.sf2github)
+
+if not args.skipissuecreation:
+    createGitHubArtifact(tickets, "issues", issue.sf2github)
+    sleep(minisleep)
+
 prefix = getPrefix(export)
 issue.updateAllIssues(auth, args.repo, export, not args.no_id_in_title, collaborators, prefix)
