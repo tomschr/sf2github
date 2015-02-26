@@ -9,7 +9,7 @@ from time import sleep
 import milestone
 import issue
 
-from config import sleeptime # , OAUTH
+from config import sleeptime, CLIENTID, CLIENTSECRET, TOKEN
 
 OAUTH="?client_id={cid}&client_secret={secret}".format(cid=CLIENTID, secret=CLIENTSECRET )
 
