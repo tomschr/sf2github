@@ -4,10 +4,12 @@ import re
 
 import milestone as milestones
 
+from config import userdict, minisleep, sleeptime, OAUTH
+from time import sleep
 
-userdict = {
-    "codeguru": "codeguru42"
-}
+#userdict = {
+## "codeguru": "codeguru42"
+#}
 
 """
 mapping of Sourceforge username -> GitHub username. Extend this dictionary
@@ -111,7 +113,8 @@ def updateAllIssues(auth, repo, json_data, appendSFNumber, collaborators, prefix
             else:
                 print(str(statusCode) + ": " + message)
                 failures += 1
-
+            # sleep(minisleep)
+            
             addAllComments(auth, githubIssue['url'],
                 sfTicket['discussion_thread']['posts'])
 
