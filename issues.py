@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
+from config import userdict
 
-
-userdict = {
-        # provide your sourceforge -> github user name mappings here.
-        # syntax:
-        # "old_sf_user": "NewGitHubUser",
-        # "another": "line",
-        # "last": "line"
-}
+#userdict = {
+        ## provide your sourceforge -> github user name mappings here.
+        ## syntax:
+        ## "old_sf_user": "NewGitHubUser",
+        ## "another": "line",
+        ## "last": "line"
+#}
 
 
 #######################################################################
